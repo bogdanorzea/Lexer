@@ -6,14 +6,14 @@ import utilities.DummyReader;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LexerTest {
+class LexerIdentifierTokenTest {
     @Test
     void readIdentifierWithSimpleLetter() {
         DummyReader dummyReader = new DummyReader("a");
         Lexer lexer = new Lexer(dummyReader);
         Token token = lexer.getToken();
 
-        validateTokenValue(token, TokenType.IDENTIFIER, "a");
+        validateTokenStringValue(token, "a");
         validateTokenPosition(token, 0, 0);
     }
 
@@ -23,7 +23,7 @@ class LexerTest {
         Lexer lexer = new Lexer(dummyReader);
         Token token = lexer.getToken();
 
-        validateTokenValue(token, TokenType.IDENTIFIER, "a");
+        validateTokenStringValue(token, "a");
         validateTokenPosition(token, 2, 0);
     }
 
@@ -33,7 +33,7 @@ class LexerTest {
         Lexer lexer = new Lexer(dummyReader);
         Token token = lexer.getToken();
 
-        validateTokenValue(token, TokenType.IDENTIFIER, "a");
+        validateTokenStringValue(token, "a");
         validateTokenPosition(token, 0, 1);
     }
 
@@ -43,7 +43,7 @@ class LexerTest {
         Lexer lexer = new Lexer(dummyReader);
         Token token = lexer.getToken();
 
-        validateTokenValue(token, TokenType.IDENTIFIER, "a");
+        validateTokenStringValue(token, "a");
         validateTokenPosition(token, 2, 2);
     }
 
@@ -53,7 +53,7 @@ class LexerTest {
         Lexer lexer = new Lexer(dummyReader);
         Token token = lexer.getToken();
 
-        validateTokenValue(token, TokenType.IDENTIFIER, "ab");
+        validateTokenStringValue(token, "ab");
     }
 
     @Test
@@ -62,7 +62,7 @@ class LexerTest {
         Lexer lexer = new Lexer(dummyReader);
         Token token = lexer.getToken();
 
-        validateTokenValue(token, TokenType.IDENTIFIER, "ab5");
+        validateTokenStringValue(token, "ab5");
     }
 
     @Test
@@ -71,25 +71,17 @@ class LexerTest {
         Lexer lexer = new Lexer(dummyReader);
         Token token = lexer.getToken();
 
-        validateTokenValue(token, TokenType.IDENTIFIER, "ab_");
+        validateTokenStringValue(token, "ab_");
     }
 
-    @Test
-    void readTokenWithReservedName() {
-        DummyReader dummyReader = new DummyReader("main");
-        Lexer lexer = new Lexer(dummyReader);
-        Token token = lexer.getToken();
-
-        validateTokenValue(token, TokenType.RESERVED_WORD, "main");
-    }
-
-    private void validateTokenValue(Token t, TokenType tokenType, String tokenValue) {
-        assertEquals(tokenType, t.getType());
-        assertEquals(tokenValue, t.getAttribute().getValue());
+    private void validateTokenStringValue(Token t, String tokenValue) {
+        assertEquals(TokenType.IDENTIFIER, t.getType());
+        assertEquals(tokenValue, t.getAttribute().getStringValue());
     }
 
     private void validateTokenPosition(Token t, int columnNumber, int lineNumber) {
         assertEquals(columnNumber, t.getColumnNumber());
         assertEquals(lineNumber, t.getLineNumber());
     }
+
 }

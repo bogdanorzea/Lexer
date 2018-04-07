@@ -10,5 +10,6 @@ public enum TokenType {
     SEPARATOR,
     COMMENT,
     SPACE,
-    RESERVED_WORD
+    RESERVED_WORD,
+    RESERVED_TYPE,
 }

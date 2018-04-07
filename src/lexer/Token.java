@@ -22,7 +22,7 @@ public class Token {
         return columnNumber;
     }
 
-    public Token(TokenType type, TokenAttribute attribute, int lineNumber, int columnNumber) {
+    public Token(TokenType type, TokenAttribute attribute, int columnNumber, int lineNumber) {
         this.type = type;
         this.attribute = attribute;
         this.lineNumber = lineNumber;
