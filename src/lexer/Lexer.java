@@ -251,6 +251,40 @@ public class Lexer {
             }
         }
 
+        if (nextChar == '\'') {
+            currentColumnNumber++;
+            nextChar = getChar();
+            char currentChar;
+            if (nextChar != '\\') {
+                currentChar = (char) nextChar;
+            } else {
+                currentColumnNumber++;
+                nextChar = getChar();
+
+                if (peekChar() == '\'') {
+                    currentChar = '\'';
+                } else {
+                    throw new RuntimeException("Char token was incorrectly formatted");
+                }
+            }
+
+            currentColumnNumber++;
+            nextChar = getChar();
+
+            if (nextChar == '\'') {
+                currentColumnNumber++;
+                nextChar = getChar();
+
+                return new Token(
+                        TokenType.CHAR,
+                        new TokenAttribute(currentChar),
+                        currentColumnNumber - 3,
+                        currentLineNumber);
+            } else {
+                throw new RuntimeException("Char token was incorrectly formatted");
+            }
+        }
+
         if (operators.containsKey(String.valueOf((char) nextChar))) {
             String tokenStringValue = String.valueOf((char) nextChar);
 

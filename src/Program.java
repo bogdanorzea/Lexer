@@ -16,7 +16,7 @@ public class Program {
                 System.out.println(
                         String.format("Token type %s with value: %s",
                                 token.getType(),
-                                token.getAttribute().getStringValue())
+                                token.getAttribute().getValue())
                 );
                 token = lexer.getToken();
             }
