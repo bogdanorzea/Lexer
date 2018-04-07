@@ -129,14 +129,16 @@ public class Lexer {
             } else if (reservedTypes.containsKey(builder.toString())) {
                 tokenType = TokenType.RESERVED_TYPE;
 
-                if(nextChar == '['){
+                if (nextChar == '[') {
+                    builder.append('[');
                     currentColumnNumber++;
                     nextChar = getChar();
-                    if (nextChar == ']'){
-                        builder.append("[]");
+
+                    while (Character.isDigit(nextChar) || nextChar == ']') {
+                        builder.append((char) nextChar);
+                        currentColumnNumber++;
+                        nextChar = getChar();
                     }
-                    currentColumnNumber++;
-                    nextChar = getChar();
                 }
 
             } else {

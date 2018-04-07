@@ -2,7 +2,7 @@ class TestClass {
    public static void main(String[] args) {
        int a = 5;
 
-       int[] arr = new int[];
+       int[] arr = new int[8];
        char b = 'b';
 
        return null;
