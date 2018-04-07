@@ -5,6 +5,10 @@ public class TokenAttribute {
     private float floatValue;
     private String value;
 
+    public TokenAttribute() {
+
+    }
+
     public String getStringValue() {
         return value;
     }

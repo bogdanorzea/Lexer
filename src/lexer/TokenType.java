@@ -9,7 +9,7 @@ public enum TokenType {
     OPERATOR,
     SEPARATOR,
     COMMENT,
-    SPACE,
     RESERVED_WORD,
     RESERVED_TYPE,
+    PARENTHESES,
 }

@@ -28,24 +28,6 @@ class LexerReservedWordTokenTest {
         validateTokenReservedType(token, "int");
     }
 
-    @Test
-    void readTokenWithReservedPointerType() {
-        DummyReader dummyReader = new DummyReader("int*");
-        Lexer lexer = new Lexer(dummyReader);
-        Token token = lexer.getToken();
-
-        validateTokenReservedType(token, "int*");
-    }
-
-    @Test
-    void readTokenWithReservedPointerTypeWithSpaceBeforeStar() {
-        DummyReader dummyReader = new DummyReader("int *");
-        Lexer lexer = new Lexer(dummyReader);
-        Token token = lexer.getToken();
-
-        validateTokenReservedType(token, "int*");
-    }
-
     private void validateTokenReservedValue(Token t, String tokenValue) {
         assertEquals(TokenType.RESERVED_WORD, t.getType());
         assertEquals(tokenValue, t.getAttribute().getStringValue());
