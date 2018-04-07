@@ -1,9 +1,9 @@
 package test;
 
-import utilities.DummyReader;
 import org.junit.jupiter.api.Test;
+import utilities.DummyReader;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DummyReaderTest {
     @Test

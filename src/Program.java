@@ -9,7 +9,8 @@ public class Program {
         System.out.println("Reading file from disk...");
 
         try (FileReader fileReader = new FileReader("resources/input.txt")) {
-            Lexer lexer = new Lexer(fileReader);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            Lexer lexer = new Lexer(bufferedReader);
             Token token = lexer.getToken();
             while (token != null) {
                 System.out.println(

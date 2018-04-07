@@ -193,6 +193,64 @@ public class Lexer {
                     currentLineNumber);
         }
 
+        if (nextChar == '/') {
+            StringBuilder builder = new StringBuilder(String.valueOf((char) nextChar));
+            currentColumnNumber++;
+            nextChar = getChar();
+
+            if (nextChar == '/') {
+                builder.append((char) nextChar);
+                currentColumnNumber++;
+                nextChar = getChar();
+
+                while (nextChar != '\n') {
+                    builder.append((char) nextChar);
+                    currentColumnNumber++;
+                    nextChar = getChar();
+                }
+
+                String tokenStringValue = builder.toString();
+                return new Token(
+                        TokenType.COMMENT,
+                        new TokenAttribute(tokenStringValue),
+                        currentColumnNumber - tokenStringValue.length(),
+                        currentLineNumber);
+            } else if (nextChar == '*') {
+                builder.append((char) nextChar);
+                currentColumnNumber++;
+                nextChar = getChar();
+
+                while (nextChar != '*' && peekChar() != '/') {
+                    builder.append((char) nextChar);
+                    currentColumnNumber++;
+                    nextChar = getChar();
+                }
+
+                builder.append((char) nextChar);
+                currentColumnNumber++;
+                nextChar = getChar();
+                builder.append((char) nextChar);
+                currentColumnNumber++;
+                nextChar = getChar();
+
+                String tokenStringValue = builder.toString();
+                return new Token(
+                        TokenType.COMMENT,
+                        new TokenAttribute(tokenStringValue),
+                        currentColumnNumber - tokenStringValue.length(),
+                        currentLineNumber);
+
+            } else {
+                String tokenStringValue = builder.toString();
+
+                return new Token(
+                        TokenType.OPERATOR,
+                        new TokenAttribute(tokenStringValue),
+                        currentColumnNumber - tokenStringValue.length(),
+                        currentLineNumber);
+            }
+        }
+
         if (operators.containsKey(String.valueOf((char) nextChar))) {
             String tokenStringValue = String.valueOf((char) nextChar);
 
@@ -241,6 +299,19 @@ public class Lexer {
                 currentColumnNumber - tokenStringValue.length(),
                 currentLineNumber);
 
+    }
+
+    private int peekChar() {
+        try {
+            reader.mark(1);
+            int ret = reader.read();
+            reader.reset();
+
+            return ret;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     private void skipWhitespace() {

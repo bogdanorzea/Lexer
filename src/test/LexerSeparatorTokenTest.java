@@ -2,11 +2,8 @@ package test;
 
 import lexer.Lexer;
 import lexer.Token;
-import lexer.TokenType;
 import org.junit.jupiter.api.Test;
 import utilities.DummyReader;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LexerSeparatorTokenTest {
 
@@ -17,10 +14,7 @@ class LexerSeparatorTokenTest {
         lexer.getToken();
         Token tokenSeparator = lexer.getToken();
 
-        validateTokenSeparatorType(tokenSeparator);
+        TestUtils.validateTokenSeparatorType(tokenSeparator);
     }
 
-    private void validateTokenSeparatorType(Token t) {
-        assertEquals(TokenType.SEPARATOR, t.getType());
-    }
 }

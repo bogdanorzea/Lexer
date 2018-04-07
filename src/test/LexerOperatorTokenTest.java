@@ -2,11 +2,8 @@ package test;
 
 import lexer.Lexer;
 import lexer.Token;
-import lexer.TokenType;
 import org.junit.jupiter.api.Test;
 import utilities.DummyReader;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LexerOperatorTokenTest {
 
@@ -16,10 +13,19 @@ class LexerOperatorTokenTest {
         Lexer lexer = new Lexer(dummyReader);
         Token token = lexer.getToken();
 
-        validateTokenOperatorType(token);
+        TestUtils.validateTokenOperatorType(token);
     }
 
-    private void validateTokenOperatorType(Token t) {
-        assertEquals(TokenType.OPERATOR, t.getType());
+    @Test
+    void readDivideOperatorToken() {
+        DummyReader dummyReader = new DummyReader("10/5;");
+        Lexer lexer = new Lexer(dummyReader);
+        lexer.getToken();
+        Token token = lexer.getToken();
+
+        TestUtils.validateTokenOperatorType(token);
+        TestUtils.validateTokenPosition(token, 2, 0);
+
     }
+
 }

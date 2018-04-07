@@ -2,11 +2,9 @@ package test;
 
 import lexer.Lexer;
 import lexer.Token;
-import lexer.TokenType;
 import org.junit.jupiter.api.Test;
 import utilities.DummyReader;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 

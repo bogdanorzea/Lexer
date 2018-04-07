@@ -5,6 +5,9 @@ class TestClass {
        int[] arr = new int[8];
        char b = 'b';
 
-       return null;
+        // this line will be ignored
+        a / 5;
+
+       return null /* inline comment */;
    }
 }
