@@ -1,6 +1,7 @@
 package lexer;
 
 public enum TokenType {
+    UNKNOWN,
     IDENTIFIER,
     INTEGER,
     FLOAT,

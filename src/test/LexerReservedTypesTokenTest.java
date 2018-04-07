@@ -19,6 +19,15 @@ class LexerReservedTypesTokenTest {
         validateTokenReservedType(token, "int");
     }
 
+    @Test
+    void readTokenWithReservedTypeArray() {
+        DummyReader dummyReader = new DummyReader("int[] a");
+        Lexer lexer = new Lexer(dummyReader);
+        Token token = lexer.getToken();
+
+        validateTokenReservedType(token, "int[]");
+    }
+
     private void validateTokenReservedType(Token t, String tokenValue) {
         assertEquals(TokenType.RESERVED_TYPE, t.getType());
         assertEquals(tokenValue, t.getAttribute().getStringValue());

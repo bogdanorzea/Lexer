@@ -23,10 +23,12 @@ public class TokenAttribute {
 
     public TokenAttribute(int integerValue) {
         this.integerValue = integerValue;
+        this.value  = String.valueOf(integerValue);
     }
 
     public TokenAttribute(float floatValue) {
         this.floatValue = floatValue;
+        this.value  = String.valueOf(floatValue);
     }
 
     public TokenAttribute(String value) {

@@ -15,6 +15,7 @@ public class Lexer {
     private final static Map<String, TokenType> reservedTypes;
     private final static Map<String, TokenType> operators;
     private final static Map<String, TokenType> parentheses;
+    private final static Map<String, TokenType> separators;
 
 
     static {
@@ -51,7 +52,7 @@ public class Lexer {
         reservedWords.put("break", TokenType.RESERVED_WORD);
 
         reservedTypes = new HashMap<>();
-        reservedWords.put("null", TokenType.RESERVED_WORD);
+        reservedTypes.put("null", TokenType.RESERVED_WORD);
         reservedTypes.put("void", TokenType.RESERVED_TYPE);
         reservedTypes.put("byte", TokenType.RESERVED_TYPE);
         reservedTypes.put("short", TokenType.RESERVED_TYPE);
@@ -61,6 +62,7 @@ public class Lexer {
         reservedTypes.put("double", TokenType.RESERVED_TYPE);
         reservedTypes.put("boolean", TokenType.RESERVED_TYPE);
         reservedTypes.put("char", TokenType.RESERVED_TYPE);
+        reservedTypes.put("String", TokenType.RESERVED_TYPE);
 
         operators = new HashMap<>();
         operators.put("+", TokenType.OPERATOR);
@@ -69,6 +71,7 @@ public class Lexer {
         operators.put("/", TokenType.OPERATOR);
         operators.put("^", TokenType.OPERATOR);
         operators.put("%", TokenType.OPERATOR);
+        operators.put("=", TokenType.OPERATOR);
 
         parentheses = new HashMap<>();
         parentheses.put("(", TokenType.PARENTHESES);
@@ -77,6 +80,14 @@ public class Lexer {
         parentheses.put("]", TokenType.PARENTHESES);
         parentheses.put("{", TokenType.PARENTHESES);
         parentheses.put("}", TokenType.PARENTHESES);
+        parentheses.put("<", TokenType.PARENTHESES);
+        parentheses.put(">", TokenType.PARENTHESES);
+
+        separators = new HashMap<>();
+        separators.put(",", TokenType.SEPARATOR);
+        separators.put(".", TokenType.SEPARATOR);
+        separators.put(";", TokenType.SEPARATOR);
+        separators.put(":", TokenType.SEPARATOR);
     }
 
     public Lexer(Reader reader) {
@@ -96,6 +107,10 @@ public class Lexer {
     public Token getToken() {
         skipWhitespace();
 
+        if (nextChar == -1) {
+            return null;
+        }
+
         if (Character.isLetter(nextChar)) {
             StringBuilder builder = new StringBuilder(Character.toString((char) nextChar));
             currentColumnNumber++;
@@ -113,6 +128,17 @@ public class Lexer {
                 tokenType = TokenType.RESERVED_WORD;
             } else if (reservedTypes.containsKey(builder.toString())) {
                 tokenType = TokenType.RESERVED_TYPE;
+
+                if(nextChar == '['){
+                    currentColumnNumber++;
+                    nextChar = getChar();
+                    if (nextChar == ']'){
+                        builder.append("[]");
+                    }
+                    currentColumnNumber++;
+                    nextChar = getChar();
+                }
+
             } else {
                 tokenType = TokenType.IDENTIFIER;
             }
@@ -191,7 +217,28 @@ public class Lexer {
                     currentLineNumber);
         }
 
-        return null;
+        if (separators.containsKey(String.valueOf((char) nextChar))) {
+            String tokenStringValue = String.valueOf((char) nextChar);
+
+            currentColumnNumber++;
+            nextChar = getChar();
+
+            return new Token(
+                    TokenType.SEPARATOR,
+                    new TokenAttribute(tokenStringValue),
+                    currentColumnNumber - tokenStringValue.length(),
+                    currentLineNumber);
+        }
+
+        String tokenStringValue = String.valueOf((char) nextChar);
+        nextChar = getChar();
+
+        return new Token(
+                TokenType.UNKNOWN,
+                new TokenAttribute(tokenStringValue),
+                currentColumnNumber - tokenStringValue.length(),
+                currentLineNumber);
+
     }
 
     private void skipWhitespace() {
