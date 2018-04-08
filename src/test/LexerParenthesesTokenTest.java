@@ -2,6 +2,7 @@ package test;
 
 import lexer.Lexer;
 import lexer.Token;
+import lexer.TokenType;
 import org.junit.jupiter.api.Test;
 import utilities.DummyReader;
 
@@ -13,7 +14,7 @@ class LexerParenthesesTokenTest {
         Lexer lexer = new Lexer(dummyReader);
         Token token = lexer.getToken();
 
-        TestUtils.validateTokenParenthesesType(token);
+        TestUtils.validateTokenType(token, TokenType.PARENTHESES);
     }
 
 }

@@ -2,6 +2,7 @@ package test;
 
 import lexer.Lexer;
 import lexer.Token;
+import lexer.TokenType;
 import org.junit.jupiter.api.Test;
 import utilities.DummyReader;
 
@@ -14,6 +15,7 @@ class LexerFloatTokenTest {
         Token token = lexer.getToken();
 
         TestUtils.validateTokenFloatValue(token, 1234.56f);
+        TestUtils.validateTokenType(token, TokenType.FLOAT);
     }
 
 }

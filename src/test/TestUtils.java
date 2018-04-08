@@ -12,44 +12,23 @@ public class TestUtils {
     }
 
     static void validateTokenValue(Token t, String tokenValue) {
-        assertEquals(TokenType.IDENTIFIER, t.getType());
         assertEquals(tokenValue, t.getAttribute().getValue());
     }
 
+    static void validateTokenType(Token t, TokenType identifier) {
+        assertEquals(identifier, t.getType());
+    }
+
     static void validateTokenFloatValue(Token t, float tokenFloatValue) {
-        assertEquals(TokenType.FLOAT, t.getType());
         assertEquals(tokenFloatValue, t.getAttribute().getFloatValue());
     }
 
     static void validateTokenCharValue(Token t, char tokenCharValue) {
-        assertEquals(TokenType.CHAR, t.getType());
         assertEquals(tokenCharValue, t.getAttribute().getCharValue());
     }
 
     static void validateTokenIntegerValue(Token t, int tokenIntegerValue) {
-        assertEquals(TokenType.INTEGER, t.getType());
         assertEquals(tokenIntegerValue, t.getAttribute().getIntegerValue());
     }
 
-    static void validateTokenOperatorType(Token t) {
-        assertEquals(TokenType.OPERATOR, t.getType());
-    }
-
-    static void validateTokenParenthesesType(Token t) {
-        assertEquals(TokenType.PARENTHESES, t.getType());
-    }
-
-    static void validateTokenReservedType(Token t, String tokenValue) {
-        assertEquals(TokenType.RESERVED_TYPE, t.getType());
-        assertEquals(tokenValue, t.getAttribute().getValue());
-    }
-
-    static void validateTokenReservedValue(Token t, String tokenValue) {
-        assertEquals(TokenType.RESERVED_WORD, t.getType());
-        assertEquals(tokenValue, t.getAttribute().getValue());
-    }
-
-    static void validateTokenSeparatorType(Token t) {
-        assertEquals(TokenType.SEPARATOR, t.getType());
-    }
 }

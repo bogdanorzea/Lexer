@@ -2,6 +2,7 @@ package test;
 
 import lexer.Lexer;
 import lexer.Token;
+import lexer.TokenType;
 import org.junit.jupiter.api.Test;
 import utilities.DummyReader;
 
@@ -13,6 +14,7 @@ class LexerIdentifierTokenTest {
         Token token = lexer.getToken();
 
         TestUtils.validateTokenValue(token, "a");
+        TestUtils.validateTokenType(token, TokenType.IDENTIFIER);
         TestUtils.validateTokenPosition(token, 0, 0);
     }
 
@@ -23,6 +25,7 @@ class LexerIdentifierTokenTest {
         Token token = lexer.getToken();
 
         TestUtils.validateTokenValue(token, "a");
+        TestUtils.validateTokenType(token, TokenType.IDENTIFIER);
         TestUtils.validateTokenPosition(token, 2, 0);
     }
 
@@ -33,6 +36,7 @@ class LexerIdentifierTokenTest {
         Token token = lexer.getToken();
 
         TestUtils.validateTokenValue(token, "a");
+        TestUtils.validateTokenType(token, TokenType.IDENTIFIER);
         TestUtils.validateTokenPosition(token, 0, 1);
     }
 
@@ -43,6 +47,7 @@ class LexerIdentifierTokenTest {
         Token token = lexer.getToken();
 
         TestUtils.validateTokenValue(token, "a");
+        TestUtils.validateTokenType(token, TokenType.IDENTIFIER);
         TestUtils.validateTokenPosition(token, 2, 2);
     }
 
@@ -53,6 +58,7 @@ class LexerIdentifierTokenTest {
         Token token = lexer.getToken();
 
         TestUtils.validateTokenValue(token, "ab");
+        TestUtils.validateTokenType(token, TokenType.IDENTIFIER);
     }
 
     @Test
@@ -62,6 +68,7 @@ class LexerIdentifierTokenTest {
         Token token = lexer.getToken();
 
         TestUtils.validateTokenValue(token, "ab5");
+        TestUtils.validateTokenType(token, TokenType.IDENTIFIER);
     }
 
     @Test
@@ -71,6 +78,7 @@ class LexerIdentifierTokenTest {
         Token token = lexer.getToken();
 
         TestUtils.validateTokenValue(token, "ab_");
+        TestUtils.validateTokenType(token, TokenType.IDENTIFIER);
     }
 
 }

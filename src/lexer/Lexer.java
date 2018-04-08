@@ -72,6 +72,24 @@ public class Lexer {
         operators.put("^", TokenType.OPERATOR);
         operators.put("%", TokenType.OPERATOR);
         operators.put("=", TokenType.OPERATOR);
+        operators.put("!", TokenType.OPERATOR);
+        operators.put("&", TokenType.OPERATOR);
+        operators.put("|", TokenType.OPERATOR);
+        operators.put("++", TokenType.OPERATOR);
+        operators.put("--", TokenType.OPERATOR);
+        operators.put("+=", TokenType.OPERATOR);
+        operators.put("-=", TokenType.OPERATOR);
+        operators.put("/=", TokenType.OPERATOR);
+        operators.put("*=", TokenType.OPERATOR);
+
+        operators.put("==", TokenType.OPERATOR);
+        operators.put("<=", TokenType.OPERATOR);
+        operators.put("<", TokenType.OPERATOR);
+        operators.put(">=", TokenType.OPERATOR);
+        operators.put(">", TokenType.OPERATOR);
+        operators.put("!=", TokenType.OPERATOR);
+        operators.put("&&", TokenType.OPERATOR);
+        operators.put("||", TokenType.OPERATOR);
 
         parentheses = new HashMap<>();
         parentheses.put("(", TokenType.PARENTHESES);
@@ -285,17 +303,50 @@ public class Lexer {
             }
         }
 
-        if (operators.containsKey(String.valueOf((char) nextChar))) {
-            String tokenStringValue = String.valueOf((char) nextChar);
-
+        /*if (!Character.isLetterOrDigit(nextChar)) {
+            StringBuilder builder = new StringBuilder(Character.toString((char) nextChar));
             currentColumnNumber++;
             nextChar = getChar();
 
-            return new Token(
-                    TokenType.OPERATOR,
-                    new TokenAttribute(tokenStringValue),
-                    currentColumnNumber - tokenStringValue.length(),
-                    currentLineNumber);
+            while (!Character.isLetterOrDigit(nextChar)) {
+                currentColumnNumber++;
+                nextChar = getChar();
+                builder.append(nextChar);
+            }
+
+            if (operators.containsKey(builder.toString())) {
+                String tokenStringValue = builder.toString();
+                return new Token(TokenType.OPERATOR,
+                        new TokenAttribute(tokenStringValue),
+                        currentColumnNumber - tokenStringValue.length(), currentLineNumber
+                );
+            } else {
+                throw new RuntimeException("Operator token was incorrectly formatted");
+            }
+        }*/
+
+        if (operators.containsKey(String.valueOf((char) nextChar))) {
+            StringBuilder builder = new StringBuilder(Character.toString((char) nextChar));
+            currentColumnNumber++;
+            nextChar = getChar();
+
+            if (operators.containsKey(String.valueOf((char) nextChar))) {
+                builder.append((char) nextChar);
+                currentColumnNumber++;
+                nextChar = getChar();
+            }
+
+            if (operators.containsKey(builder.toString())) {
+                String tokenStringValue = builder.toString();
+                return new Token(TokenType.OPERATOR,
+                        new TokenAttribute(tokenStringValue),
+                        currentColumnNumber - tokenStringValue.length(), currentLineNumber
+                );
+            } else {
+                throw new RuntimeException("Operator token was incorrectly formatted");
+            }
+
+
         }
 
         if (parentheses.containsKey(String.valueOf((char) nextChar))) {

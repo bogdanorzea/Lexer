@@ -2,6 +2,7 @@ package test;
 
 import lexer.Lexer;
 import lexer.Token;
+import lexer.TokenType;
 import org.junit.jupiter.api.Test;
 import utilities.DummyReader;
 
@@ -13,7 +14,8 @@ class LexerReservedTypesTokenTest {
         Lexer lexer = new Lexer(dummyReader);
         Token token = lexer.getToken();
 
-        TestUtils.validateTokenReservedType(token, "int");
+        TestUtils.validateTokenType(token, TokenType.RESERVED_TYPE);
+        TestUtils.validateTokenValue(token, "int");
     }
 
     @Test
@@ -22,7 +24,8 @@ class LexerReservedTypesTokenTest {
         Lexer lexer = new Lexer(dummyReader);
         Token token = lexer.getToken();
 
-        TestUtils.validateTokenReservedType(token, "int[]");
+        TestUtils.validateTokenType(token, TokenType.RESERVED_TYPE);
+        TestUtils.validateTokenValue(token, "int[]");
     }
 
 }

@@ -9,6 +9,14 @@ class TestClass {
         // this line will be ignored
         a / 5;
 
+        if (a < b) {
+            a++;
+            return false;
+        } else if (a <= b) {
+            b+=7;
+            return true;
+        }
+
        return null /* inline comment */;
    }
 }
