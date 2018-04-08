@@ -304,23 +304,24 @@ public class Lexer {
         }
 
         if (nextChar == '"') {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder(String.valueOf((char) nextChar));
             currentColumnNumber++;
             nextChar = getChar();
 
-            while (nextChar != '"') {
+            while (nextChar != '"' || builder.charAt(builder.length() - 1) == '\\') {
                 builder.append((char) nextChar);
                 currentColumnNumber++;
                 nextChar = getChar();
             }
 
+            builder.append((char) nextChar);
             currentColumnNumber++;
             nextChar = getChar();
 
-            String tokenStringValue = builder.toString();
+            String tokenStringValue = builder.substring(1, builder.length() - 1);
             return new Token(TokenType.STRING,
                     new TokenAttribute(tokenStringValue),
-                    currentColumnNumber - tokenStringValue.length() - 2,
+                    currentColumnNumber - builder.length(),
                     currentLineNumber
             );
         }
