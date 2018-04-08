@@ -303,27 +303,27 @@ public class Lexer {
             }
         }
 
-        /*if (!Character.isLetterOrDigit(nextChar)) {
-            StringBuilder builder = new StringBuilder(Character.toString((char) nextChar));
+        if (nextChar == '"') {
+            StringBuilder builder = new StringBuilder();
             currentColumnNumber++;
             nextChar = getChar();
 
-            while (!Character.isLetterOrDigit(nextChar)) {
+            while (nextChar != '"') {
+                builder.append((char) nextChar);
                 currentColumnNumber++;
                 nextChar = getChar();
-                builder.append(nextChar);
             }
 
-            if (operators.containsKey(builder.toString())) {
-                String tokenStringValue = builder.toString();
-                return new Token(TokenType.OPERATOR,
-                        new TokenAttribute(tokenStringValue),
-                        currentColumnNumber - tokenStringValue.length(), currentLineNumber
-                );
-            } else {
-                throw new RuntimeException("Operator token was incorrectly formatted");
-            }
-        }*/
+            currentColumnNumber++;
+            nextChar = getChar();
+
+            String tokenStringValue = builder.toString();
+            return new Token(TokenType.STRING,
+                    new TokenAttribute(tokenStringValue),
+                    currentColumnNumber - tokenStringValue.length() - 2,
+                    currentLineNumber
+            );
+        }
 
         if (operators.containsKey(String.valueOf((char) nextChar))) {
             StringBuilder builder = new StringBuilder(Character.toString((char) nextChar));
@@ -340,7 +340,8 @@ public class Lexer {
                 String tokenStringValue = builder.toString();
                 return new Token(TokenType.OPERATOR,
                         new TokenAttribute(tokenStringValue),
-                        currentColumnNumber - tokenStringValue.length(), currentLineNumber
+                        currentColumnNumber - tokenStringValue.length(),
+                        currentLineNumber
                 );
             } else {
                 throw new RuntimeException("Operator token was incorrectly formatted");
