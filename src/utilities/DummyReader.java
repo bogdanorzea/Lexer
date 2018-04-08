@@ -6,6 +6,7 @@ import java.io.Reader;
 public class DummyReader extends Reader {
     private String dummyString;
     private int position = 0;
+    private int markPosition = -1;
 
     private DummyReader() {
     }
@@ -20,6 +21,22 @@ public class DummyReader extends Reader {
         }
 
         return dummyString.charAt(position++);
+    }
+
+    @Override
+    public boolean markSupported() {
+        return true;
+    }
+
+    @Override
+    public void mark(int readAheadLimit) throws IOException {
+        this.markPosition = position;
+    }
+
+    @Override
+    public void reset() throws IOException {
+        this.position = markPosition;
+        markPosition = -1;
     }
 
     @Override

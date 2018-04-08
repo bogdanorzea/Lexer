@@ -238,7 +238,7 @@ public class Lexer {
                 currentColumnNumber++;
                 nextChar = getChar();
 
-                while (nextChar != '*' && peekChar() != '/') {
+                while (!(nextChar == '*' && peekChar() == '/')) {
                     builder.append((char) nextChar);
                     currentColumnNumber++;
                     nextChar = getChar();
@@ -308,7 +308,7 @@ public class Lexer {
             currentColumnNumber++;
             nextChar = getChar();
 
-            while (nextChar != '"' || builder.charAt(builder.length() - 1) == '\\') {
+            while (!(builder.charAt(builder.length() - 1) != '\\' && nextChar == '"')) {
                 builder.append((char) nextChar);
                 currentColumnNumber++;
                 nextChar = getChar();
