@@ -122,311 +122,6 @@ public class Lexer {
         }
     }
 
-    public Token getToken() {
-        skipWhitespace();
-
-        if (nextChar == -1) {
-            return null;
-        }
-
-        if (Character.isLetter(nextChar)) {
-            StringBuilder builder = new StringBuilder(Character.toString((char) nextChar));
-            currentColumnNumber++;
-            nextChar = getChar();
-
-            while (Character.isLetterOrDigit(nextChar) || nextChar == '_') {
-                builder.append((char) nextChar);
-                currentColumnNumber++;
-                nextChar = getChar();
-            }
-
-            TokenType tokenType;
-
-            if (reservedWords.containsKey(builder.toString())) {
-                tokenType = TokenType.RESERVED_WORD;
-            } else if (reservedTypes.containsKey(builder.toString())) {
-                tokenType = TokenType.RESERVED_TYPE;
-
-                if (nextChar == '[') {
-                    builder.append('[');
-                    currentColumnNumber++;
-                    nextChar = getChar();
-
-                    while (Character.isDigit(nextChar) || nextChar == ']') {
-                        builder.append((char) nextChar);
-                        currentColumnNumber++;
-                        nextChar = getChar();
-                    }
-                }
-
-            } else {
-                tokenType = TokenType.IDENTIFIER;
-            }
-
-            String tokenStringValue = builder.toString();
-            return new Token(tokenType,
-                    new TokenAttribute(tokenStringValue),
-                    currentColumnNumber - tokenStringValue.length(), currentLineNumber
-            );
-        }
-
-        if (Character.isDigit(nextChar)) {
-            StringBuilder builder = new StringBuilder(Character.toString((char) nextChar));
-            currentColumnNumber++;
-            nextChar = getChar();
-
-            while (Character.isDigit(nextChar)) {
-                builder.append((char) nextChar);
-                currentColumnNumber++;
-                nextChar = getChar();
-            }
-
-            if (nextChar == '.') {
-                currentColumnNumber++;
-                nextChar = getChar();
-
-                if (Character.isDigit(nextChar)) {
-                    builder.append('.');
-
-                    while (Character.isDigit(nextChar)) {
-                        builder.append((char) nextChar);
-                        currentColumnNumber++;
-                        nextChar = getChar();
-                    }
-
-                    String tokenStringValue = builder.toString();
-
-                    return new Token(TokenType.FLOAT,
-                            new TokenAttribute(Float.parseFloat(tokenStringValue)),
-                            currentColumnNumber - tokenStringValue.length(),
-                            currentLineNumber);
-                }
-            }
-
-            if ('e' == nextChar || 'E' == nextChar) {
-                currentColumnNumber++;
-                builder.append('e');
-                nextChar = getChar();
-
-                if ('-' == nextChar || '+' == nextChar) {
-                    builder.append((char) nextChar);
-                    currentColumnNumber++;
-                    nextChar = getChar();
-                }
-
-                while (Character.isDigit(nextChar)) {
-                    builder.append((char) nextChar);
-                    currentColumnNumber++;
-                    nextChar = getChar();
-                }
-
-                String tokenStringValue = builder.toString();
-
-                return new Token(TokenType.DOUBLE,
-                        new TokenAttribute(Double.parseDouble(tokenStringValue)),
-                        currentColumnNumber - tokenStringValue.length(),
-                        currentLineNumber);
-            }
-
-            String tokenStringValue = builder.toString();
-
-            return new Token(TokenType.INTEGER,
-                    new TokenAttribute(Integer.parseInt(tokenStringValue)),
-                    currentColumnNumber - tokenStringValue.length(),
-                    currentLineNumber);
-        }
-
-        if (nextChar == '/') {
-            StringBuilder builder = new StringBuilder(String.valueOf((char) nextChar));
-            currentColumnNumber++;
-            nextChar = getChar();
-
-            if (nextChar == '/') {
-                builder.append((char) nextChar);
-                currentColumnNumber++;
-                nextChar = getChar();
-
-                while (nextChar != '\n') {
-                    builder.append((char) nextChar);
-                    currentColumnNumber++;
-                    nextChar = getChar();
-                }
-
-                String tokenStringValue = builder.toString();
-                return new Token(
-                        TokenType.COMMENT,
-                        new TokenAttribute(tokenStringValue),
-                        currentColumnNumber - tokenStringValue.length(),
-                        currentLineNumber);
-            } else if (nextChar == '*') {
-                int startColumnPosition = currentColumnNumber - 1;
-                int startLinePosition = currentLineNumber;
-                builder.append((char) nextChar);
-                currentColumnNumber++;
-                nextChar = getChar();
-
-                while (!(nextChar == '*' && peekChar() == '/')) {
-                    if (isNextCharNewLine()) {
-                        currentLineNumber++;
-                        currentColumnNumber = -1;
-                    }
-                    builder.append((char) nextChar);
-                    currentColumnNumber++;
-                    nextChar = getChar();
-                }
-
-                builder.append((char) nextChar);
-                currentColumnNumber++;
-                nextChar = getChar();
-                builder.append((char) nextChar);
-                currentColumnNumber++;
-                nextChar = getChar();
-
-                String tokenStringValue = builder.toString();
-                return new Token(
-                        TokenType.COMMENT,
-                        new TokenAttribute(tokenStringValue),
-                        startColumnPosition,
-                        startLinePosition);
-
-            } else {
-                String tokenStringValue = builder.toString();
-
-                return new Token(
-                        TokenType.OPERATOR,
-                        new TokenAttribute(tokenStringValue),
-                        currentColumnNumber - tokenStringValue.length(),
-                        currentLineNumber);
-            }
-        }
-
-        if (nextChar == '\'') {
-            currentColumnNumber++;
-            nextChar = getChar();
-            char currentChar;
-            if (nextChar != '\\') {
-                currentChar = (char) nextChar;
-            } else {
-                currentColumnNumber++;
-                nextChar = getChar();
-
-                if (peekChar() == '\'') {
-                    currentChar = '\'';
-                } else {
-                    throw new RuntimeException("Char token was incorrectly formatted");
-                }
-            }
-
-            currentColumnNumber++;
-            nextChar = getChar();
-
-            if (nextChar == '\'') {
-                currentColumnNumber++;
-                nextChar = getChar();
-
-                return new Token(
-                        TokenType.CHAR,
-                        new TokenAttribute(currentChar),
-                        currentColumnNumber - 3,
-                        currentLineNumber);
-            } else {
-                throw new RuntimeException("Char token was incorrectly formatted");
-            }
-        }
-
-        if (nextChar == '"') {
-            StringBuilder builder = new StringBuilder(String.valueOf((char) nextChar));
-            currentColumnNumber++;
-            nextChar = getChar();
-
-            while (!(builder.charAt(builder.length() - 1) != '\\' && nextChar == '"') && nextChar != -1 && !isNextCharNewLine()) {
-                builder.append((char) nextChar);
-                currentColumnNumber++;
-                nextChar = getChar();
-            }
-
-            if ('"' == nextChar) {
-                builder.append((char) nextChar);
-                currentColumnNumber++;
-                nextChar = getChar();
-
-                String tokenStringValue = builder.substring(1, builder.length() - 1);
-                return new Token(TokenType.STRING,
-                        new TokenAttribute(tokenStringValue),
-                        currentColumnNumber - builder.length(),
-                        currentLineNumber);
-            } else {
-                String tokenStringValue = builder.substring(0, builder.length());
-                return new Token(TokenType.UNKNOWN,
-                        new TokenAttribute(tokenStringValue),
-                        currentColumnNumber - builder.length(),
-                        currentLineNumber);
-            }
-        }
-
-        if (operators.containsKey(String.valueOf((char) nextChar))) {
-            StringBuilder builder = new StringBuilder(Character.toString((char) nextChar));
-            currentColumnNumber++;
-            nextChar = getChar();
-
-            if (operators.containsKey(String.valueOf((char) nextChar))) {
-                builder.append((char) nextChar);
-                currentColumnNumber++;
-                nextChar = getChar();
-            }
-
-            if (operators.containsKey(builder.toString())) {
-                String tokenStringValue = builder.toString();
-                return new Token(TokenType.OPERATOR,
-                        new TokenAttribute(tokenStringValue),
-                        currentColumnNumber - tokenStringValue.length(),
-                        currentLineNumber);
-            } else {
-                String tokenStringValue = builder.toString();
-                return new Token(TokenType.UNKNOWN,
-                        new TokenAttribute(tokenStringValue),
-                        currentColumnNumber - tokenStringValue.length(),
-                        currentLineNumber);
-            }
-        }
-
-        if (parentheses.containsKey(String.valueOf((char) nextChar))) {
-            String tokenStringValue = String.valueOf((char) nextChar);
-
-            currentColumnNumber++;
-            nextChar = getChar();
-
-            return new Token(
-                    TokenType.PARENTHESES,
-                    new TokenAttribute(tokenStringValue),
-                    currentColumnNumber - tokenStringValue.length(),
-                    currentLineNumber);
-        }
-
-        if (separators.containsKey(String.valueOf((char) nextChar))) {
-            String tokenStringValue = String.valueOf((char) nextChar);
-
-            currentColumnNumber++;
-            nextChar = getChar();
-
-            return new Token(
-                    TokenType.SEPARATOR,
-                    new TokenAttribute(tokenStringValue),
-                    currentColumnNumber - tokenStringValue.length(),
-                    currentLineNumber);
-        }
-
-        String tokenStringValue = String.valueOf((char) nextChar);
-        nextChar = getChar();
-
-        return new Token(
-                TokenType.UNKNOWN,
-                new TokenAttribute(tokenStringValue),
-                currentColumnNumber - tokenStringValue.length(),
-                currentLineNumber);
-
-    }
-
     private int peekChar() {
         try {
             reader.mark(1);
@@ -462,5 +157,327 @@ public class Lexer {
         }
 
         return false;
+    }
+
+    public Token getToken() {
+        skipWhitespace();
+
+        if (nextChar == -1) return null;
+
+        if (Character.isLetter(nextChar)) return parseTokenStartingWithLetter();
+
+        if (Character.isDigit(nextChar)) return parseTokenStartingWithDigit();
+
+        if (nextChar == '/') return parseTokenStartingWithForwardSlash();
+
+        if (nextChar == '\'') return parseTokenStartingWithApostrophe();
+
+        if (nextChar == '"') return parseTokenStartingWithDoubleQuotes();
+
+        if (operators.containsKey(String.valueOf((char) nextChar))) return parseTokenStartingWithOperators();
+
+        if (parentheses.containsKey(String.valueOf((char) nextChar))) return parseTokenStartingWithParentheses();
+
+        if (separators.containsKey(String.valueOf((char) nextChar))) return parseTokenStartingWithSeparator();
+
+        return parseUnknownToken();
+    }
+
+    private Token parseTokenStartingWithLetter() {
+        StringBuilder builder = new StringBuilder(Character.toString((char) nextChar));
+        currentColumnNumber++;
+        nextChar = getChar();
+
+        while (Character.isLetterOrDigit(nextChar) || nextChar == '_') {
+            builder.append((char) nextChar);
+            currentColumnNumber++;
+            nextChar = getChar();
+        }
+
+        TokenType tokenType;
+
+        if (reservedWords.containsKey(builder.toString())) {
+            tokenType = TokenType.RESERVED_WORD;
+        } else if (reservedTypes.containsKey(builder.toString())) {
+            tokenType = TokenType.RESERVED_TYPE;
+
+            if (nextChar == '[') {
+                builder.append('[');
+                currentColumnNumber++;
+                nextChar = getChar();
+
+                while (Character.isDigit(nextChar) || nextChar == ']') {
+                    builder.append((char) nextChar);
+                    currentColumnNumber++;
+                    nextChar = getChar();
+                }
+            }
+
+        } else {
+            tokenType = TokenType.IDENTIFIER;
+        }
+
+        String tokenStringValue = builder.toString();
+        return new Token(tokenType,
+                new TokenAttribute(tokenStringValue),
+                currentColumnNumber - tokenStringValue.length(), currentLineNumber
+        );
+    }
+
+    private Token parseTokenStartingWithDigit() {
+        StringBuilder builder = new StringBuilder(Character.toString((char) nextChar));
+        currentColumnNumber++;
+        nextChar = getChar();
+
+        while (Character.isDigit(nextChar)) {
+            builder.append((char) nextChar);
+            currentColumnNumber++;
+            nextChar = getChar();
+        }
+
+        if (nextChar == '.') {
+            currentColumnNumber++;
+            nextChar = getChar();
+
+            if (Character.isDigit(nextChar)) {
+                builder.append('.');
+
+                while (Character.isDigit(nextChar)) {
+                    builder.append((char) nextChar);
+                    currentColumnNumber++;
+                    nextChar = getChar();
+                }
+
+                String tokenStringValue = builder.toString();
+
+                return new Token(TokenType.FLOAT,
+                        new TokenAttribute(Float.parseFloat(tokenStringValue)),
+                        currentColumnNumber - tokenStringValue.length(),
+                        currentLineNumber);
+            }
+        }
+
+        if ('e' == nextChar || 'E' == nextChar) {
+            currentColumnNumber++;
+            builder.append('e');
+            nextChar = getChar();
+
+            if ('-' == nextChar || '+' == nextChar) {
+                builder.append((char) nextChar);
+                currentColumnNumber++;
+                nextChar = getChar();
+            }
+
+            while (Character.isDigit(nextChar)) {
+                builder.append((char) nextChar);
+                currentColumnNumber++;
+                nextChar = getChar();
+            }
+
+            String tokenStringValue = builder.toString();
+
+            return new Token(TokenType.DOUBLE,
+                    new TokenAttribute(Double.parseDouble(tokenStringValue)),
+                    currentColumnNumber - tokenStringValue.length(),
+                    currentLineNumber);
+        }
+
+        String tokenStringValue = builder.toString();
+
+        return new Token(TokenType.INTEGER,
+                new TokenAttribute(Integer.parseInt(tokenStringValue)),
+                currentColumnNumber - tokenStringValue.length(),
+                currentLineNumber);
+    }
+
+    private Token parseTokenStartingWithForwardSlash() {
+        StringBuilder builder = new StringBuilder(String.valueOf((char) nextChar));
+        currentColumnNumber++;
+        nextChar = getChar();
+
+        if (nextChar == '/') {
+            builder.append((char) nextChar);
+            currentColumnNumber++;
+            nextChar = getChar();
+
+            while (nextChar != '\n') {
+                builder.append((char) nextChar);
+                currentColumnNumber++;
+                nextChar = getChar();
+            }
+
+            String tokenStringValue = builder.toString();
+            return new Token(
+                    TokenType.COMMENT,
+                    new TokenAttribute(tokenStringValue),
+                    currentColumnNumber - tokenStringValue.length(),
+                    currentLineNumber);
+        } else if (nextChar == '*') {
+            int startColumnPosition = currentColumnNumber - 1;
+            int startLinePosition = currentLineNumber;
+            builder.append((char) nextChar);
+            currentColumnNumber++;
+            nextChar = getChar();
+
+            while (!(nextChar == '*' && peekChar() == '/')) {
+                if (isNextCharNewLine()) {
+                    currentLineNumber++;
+                    currentColumnNumber = -1;
+                }
+                builder.append((char) nextChar);
+                currentColumnNumber++;
+                nextChar = getChar();
+            }
+
+            builder.append((char) nextChar);
+            currentColumnNumber++;
+            nextChar = getChar();
+            builder.append((char) nextChar);
+            currentColumnNumber++;
+            nextChar = getChar();
+
+            String tokenStringValue = builder.toString();
+            return new Token(
+                    TokenType.COMMENT,
+                    new TokenAttribute(tokenStringValue),
+                    startColumnPosition,
+                    startLinePosition);
+
+        } else {
+            String tokenStringValue = builder.toString();
+
+            return new Token(
+                    TokenType.OPERATOR,
+                    new TokenAttribute(tokenStringValue),
+                    currentColumnNumber - tokenStringValue.length(),
+                    currentLineNumber);
+        }
+    }
+
+    private Token parseTokenStartingWithApostrophe() {
+        currentColumnNumber++;
+        nextChar = getChar();
+        char currentChar;
+        if (nextChar != '\\') {
+            currentChar = (char) nextChar;
+        } else {
+            currentColumnNumber++;
+            nextChar = getChar();
+
+            if (peekChar() == '\'') {
+                currentChar = '\'';
+            } else {
+                throw new RuntimeException("Char token was incorrectly formatted");
+            }
+        }
+
+        currentColumnNumber++;
+        nextChar = getChar();
+
+        if (nextChar == '\'') {
+            currentColumnNumber++;
+            nextChar = getChar();
+
+            return new Token(
+                    TokenType.CHAR,
+                    new TokenAttribute(currentChar),
+                    currentColumnNumber - 3,
+                    currentLineNumber);
+        } else {
+            throw new RuntimeException("Char token was incorrectly formatted");
+        }
+    }
+
+    private Token parseTokenStartingWithDoubleQuotes() {
+        StringBuilder builder = new StringBuilder(String.valueOf((char) nextChar));
+        currentColumnNumber++;
+        nextChar = getChar();
+
+        while (!(builder.charAt(builder.length() - 1) != '\\' && nextChar == '"') && nextChar != -1 && !isNextCharNewLine()) {
+            builder.append((char) nextChar);
+            currentColumnNumber++;
+            nextChar = getChar();
+        }
+
+        if ('"' == nextChar) {
+            builder.append((char) nextChar);
+            currentColumnNumber++;
+            nextChar = getChar();
+
+            String tokenStringValue = builder.substring(1, builder.length() - 1);
+            return new Token(TokenType.STRING,
+                    new TokenAttribute(tokenStringValue),
+                    currentColumnNumber - builder.length(),
+                    currentLineNumber);
+        } else {
+            String tokenStringValue = builder.substring(0, builder.length());
+            return new Token(TokenType.UNKNOWN,
+                    new TokenAttribute(tokenStringValue),
+                    currentColumnNumber - builder.length(),
+                    currentLineNumber);
+        }
+    }
+
+    private Token parseTokenStartingWithOperators() {
+        StringBuilder builder = new StringBuilder(Character.toString((char) nextChar));
+        currentColumnNumber++;
+        nextChar = getChar();
+
+        if (operators.containsKey(String.valueOf((char) nextChar))) {
+            builder.append((char) nextChar);
+            currentColumnNumber++;
+            nextChar = getChar();
+        }
+
+        if (operators.containsKey(builder.toString())) {
+            String tokenStringValue = builder.toString();
+            return new Token(TokenType.OPERATOR,
+                    new TokenAttribute(tokenStringValue),
+                    currentColumnNumber - tokenStringValue.length(),
+                    currentLineNumber);
+        } else {
+            String tokenStringValue = builder.toString();
+            return new Token(TokenType.UNKNOWN,
+                    new TokenAttribute(tokenStringValue),
+                    currentColumnNumber - tokenStringValue.length(),
+                    currentLineNumber);
+        }
+    }
+
+    private Token parseTokenStartingWithParentheses() {
+        String tokenStringValue = String.valueOf((char) nextChar);
+
+        currentColumnNumber++;
+        nextChar = getChar();
+
+        return new Token(
+                TokenType.PARENTHESES,
+                new TokenAttribute(tokenStringValue),
+                currentColumnNumber - tokenStringValue.length(),
+                currentLineNumber);
+    }
+
+    private Token parseTokenStartingWithSeparator() {
+        String tokenStringValue = String.valueOf((char) nextChar);
+
+        currentColumnNumber++;
+        nextChar = getChar();
+
+        return new Token(
+                TokenType.SEPARATOR,
+                new TokenAttribute(tokenStringValue),
+                currentColumnNumber - tokenStringValue.length(),
+                currentLineNumber);
+    }
+
+    private Token parseUnknownToken() {
+        String tokenStringValue = String.valueOf((char) nextChar);
+        nextChar = getChar();
+
+        return new Token(
+                TokenType.UNKNOWN,
+                new TokenAttribute(tokenStringValue),
+                currentColumnNumber - tokenStringValue.length(),
+                currentLineNumber);
     }
 }
