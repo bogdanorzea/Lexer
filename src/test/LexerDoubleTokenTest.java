@@ -10,11 +10,12 @@ class LexerDoubleTokenTest {
 
     @Test
     void readDoubleToken() {
-        DummyReader dummyReader = new DummyReader("12e-25");
+        DummyReader dummyReader = new DummyReader(" 12e-25");
         Lexer lexer = new Lexer(dummyReader);
         Token token = lexer.getToken();
 
         TestUtils.validateTokenDoubleValue(token, 12e-25);
+        TestUtils.validateTokenPosition(token, 1, 0);
         TestUtils.validateTokenType(token, TokenType.DOUBLE);
     }
 

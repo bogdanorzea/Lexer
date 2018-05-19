@@ -210,6 +210,7 @@ public class Lexer {
 
                 if ('-' == nextChar || '+' == nextChar) {
                     builder.append((char) nextChar);
+                    currentColumnNumber++;
                     nextChar = getChar();
                 }
 
@@ -338,22 +339,29 @@ public class Lexer {
             currentColumnNumber++;
             nextChar = getChar();
 
-            while (!(builder.charAt(builder.length() - 1) != '\\' && nextChar == '"') && nextChar != -1) {
+            while (!(builder.charAt(builder.length() - 1) != '\\' && nextChar == '"') && nextChar != -1 && !isNextCharNewLine()) {
                 builder.append((char) nextChar);
                 currentColumnNumber++;
                 nextChar = getChar();
             }
 
-            builder.append((char) nextChar);
-            currentColumnNumber++;
-            nextChar = getChar();
+            if ('"' == nextChar) {
+                builder.append((char) nextChar);
+                currentColumnNumber++;
+                nextChar = getChar();
 
-            String tokenStringValue = builder.substring(1, builder.length() - 1);
-            return new Token(TokenType.STRING,
-                    new TokenAttribute(tokenStringValue),
-                    currentColumnNumber - builder.length(),
-                    currentLineNumber
-            );
+                String tokenStringValue = builder.substring(1, builder.length() - 1);
+                return new Token(TokenType.STRING,
+                        new TokenAttribute(tokenStringValue),
+                        currentColumnNumber - builder.length(),
+                        currentLineNumber);
+            } else {
+                String tokenStringValue = builder.substring(0, builder.length());
+                return new Token(TokenType.UNKNOWN,
+                        new TokenAttribute(tokenStringValue),
+                        currentColumnNumber - builder.length(),
+                        currentLineNumber);
+            }
         }
 
         if (operators.containsKey(String.valueOf((char) nextChar))) {
@@ -372,15 +380,13 @@ public class Lexer {
                 return new Token(TokenType.OPERATOR,
                         new TokenAttribute(tokenStringValue),
                         currentColumnNumber - tokenStringValue.length(),
-                        currentLineNumber
-                );
+                        currentLineNumber);
             } else {
                 String tokenStringValue = builder.toString();
                 return new Token(TokenType.UNKNOWN,
                         new TokenAttribute(tokenStringValue),
                         currentColumnNumber - tokenStringValue.length(),
-                        currentLineNumber
-                );
+                        currentLineNumber);
             }
         }
 
