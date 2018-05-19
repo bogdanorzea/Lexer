@@ -258,11 +258,17 @@ public class Lexer {
                         currentColumnNumber - tokenStringValue.length(),
                         currentLineNumber);
             } else if (nextChar == '*') {
+                int startColumnPosition = currentColumnNumber - 1;
+                int startLinePosition = currentLineNumber;
                 builder.append((char) nextChar);
                 currentColumnNumber++;
                 nextChar = getChar();
 
                 while (!(nextChar == '*' && peekChar() == '/')) {
+                    if (isNextCharNewLine()) {
+                        currentLineNumber++;
+                        currentColumnNumber = -1;
+                    }
                     builder.append((char) nextChar);
                     currentColumnNumber++;
                     nextChar = getChar();
@@ -279,8 +285,8 @@ public class Lexer {
                 return new Token(
                         TokenType.COMMENT,
                         new TokenAttribute(tokenStringValue),
-                        currentColumnNumber - tokenStringValue.length(),
-                        currentLineNumber);
+                        startColumnPosition,
+                        startLinePosition);
 
             } else {
                 String tokenStringValue = builder.toString();
@@ -332,7 +338,7 @@ public class Lexer {
             currentColumnNumber++;
             nextChar = getChar();
 
-            while (!(builder.charAt(builder.length() - 1) != '\\' && nextChar == '"') &&  nextChar != -1) {
+            while (!(builder.charAt(builder.length() - 1) != '\\' && nextChar == '"') && nextChar != -1) {
                 builder.append((char) nextChar);
                 currentColumnNumber++;
                 nextChar = getChar();
