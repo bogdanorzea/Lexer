@@ -5,6 +5,8 @@ public class TokenAttribute {
     private char charValue;
     private int integerValue;
     private float floatValue;
+    private double doubleValue;
+
     private String value;
 
     public TokenAttribute() {
@@ -27,6 +29,10 @@ public class TokenAttribute {
         return value;
     }
 
+    public double getDoubleValue() {
+        return this.doubleValue;
+    }
+
     public TokenAttribute(int integerValue) {
         this.integerValue = integerValue;
         this.value = String.valueOf(integerValue);
@@ -40,6 +46,11 @@ public class TokenAttribute {
     public TokenAttribute(float floatValue) {
         this.floatValue = floatValue;
         this.value = String.valueOf(floatValue);
+    }
+
+    public TokenAttribute(double doubleValue) {
+        this.doubleValue = doubleValue;
+        this.value = String.valueOf(doubleValue);
     }
 
     public TokenAttribute(String value) {

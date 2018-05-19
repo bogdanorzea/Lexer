@@ -14,7 +14,9 @@ public class Program {
             Token token = lexer.getToken();
             while (token != null) {
                 System.out.println(
-                        String.format("Token type %s with value: %s",
+                        String.format("Token @%d,%d is type %s with value: %s",
+                                token.getLineNumber()+1,
+                                token.getColumnNumber()+1,
                                 token.getType(),
                                 token.getAttribute().getValue())
                 );

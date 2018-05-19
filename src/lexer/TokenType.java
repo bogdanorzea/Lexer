@@ -13,4 +13,5 @@ public enum TokenType {
     RESERVED_WORD,
     RESERVED_TYPE,
     PARENTHESES,
+    DOUBLE,
 }

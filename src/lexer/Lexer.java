@@ -203,6 +203,30 @@ public class Lexer {
                 }
             }
 
+            if ('e' == nextChar || 'E' == nextChar) {
+                currentColumnNumber++;
+                builder.append('e');
+                nextChar = getChar();
+
+                if ('-' == nextChar || '+' == nextChar) {
+                    builder.append((char) nextChar);
+                    nextChar = getChar();
+                }
+
+                while (Character.isDigit(nextChar)) {
+                    builder.append((char) nextChar);
+                    currentColumnNumber++;
+                    nextChar = getChar();
+                }
+
+                String tokenStringValue = builder.toString();
+
+                return new Token(TokenType.DOUBLE,
+                        new TokenAttribute(Double.parseDouble(tokenStringValue)),
+                        currentColumnNumber - tokenStringValue.length(),
+                        currentLineNumber);
+            }
+
             String tokenStringValue = builder.toString();
 
             return new Token(TokenType.INTEGER,
@@ -308,7 +332,7 @@ public class Lexer {
             currentColumnNumber++;
             nextChar = getChar();
 
-            while (!(builder.charAt(builder.length() - 1) != '\\' && nextChar == '"')) {
+            while (!(builder.charAt(builder.length() - 1) != '\\' && nextChar == '"') &&  nextChar != -1) {
                 builder.append((char) nextChar);
                 currentColumnNumber++;
                 nextChar = getChar();
@@ -345,10 +369,13 @@ public class Lexer {
                         currentLineNumber
                 );
             } else {
-                throw new RuntimeException("Operator token was incorrectly formatted");
+                String tokenStringValue = builder.toString();
+                return new Token(TokenType.UNKNOWN,
+                        new TokenAttribute(tokenStringValue),
+                        currentColumnNumber - tokenStringValue.length(),
+                        currentLineNumber
+                );
             }
-
-
         }
 
         if (parentheses.containsKey(String.valueOf((char) nextChar))) {

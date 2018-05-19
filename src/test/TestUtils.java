@@ -23,6 +23,10 @@ public class TestUtils {
         assertEquals(tokenFloatValue, t.getAttribute().getFloatValue());
     }
 
+    static void validateTokenDoubleValue(Token t, double tokenDoubleValue) {
+        assertEquals(tokenDoubleValue, t.getAttribute().getDoubleValue());
+    }
+
     static void validateTokenCharValue(Token t, char tokenCharValue) {
         assertEquals(tokenCharValue, t.getAttribute().getCharValue());
     }

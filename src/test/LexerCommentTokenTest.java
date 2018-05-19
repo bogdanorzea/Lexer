@@ -30,4 +30,15 @@ class LexerCommentTokenTest {
         TestUtils.validateTokenPosition(token, 0, 0);
     }
 
+    @Test
+    void readIdentifierWithNewLineInBlockComment() {
+        DummyReader dummyReader = new DummyReader("/*\n*/");
+        Lexer lexer = new Lexer(dummyReader);
+        Token token = lexer.getToken();
+
+        TestUtils.validateTokenValue(token, "/*\n*/");
+        TestUtils.validateTokenType(token, TokenType.COMMENT);
+        TestUtils.validateTokenPosition(token, 0, 0);
+    }
+
 }
